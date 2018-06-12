@@ -66,18 +66,14 @@ string breadthFirstSearch(Node root, Node goal)
 	std::queue<Node> Q;
 	std::vector<Node> children;
 	string path = "";
-
 	Q.push(root);
-
 	while(!Q.empty())
 	{
 		Node t = Q.front();
 		path += t.getValue();
 		cout << "The path: ";
 		cout << path << endl;
-
 		Q.pop();
-
 		if(t == goal){
 			return path;
 		}
@@ -104,7 +100,6 @@ int main(int argc, char** args)
 
 	cout<<endl;
 
-	cout<<"BFS Traversal: "<<breadthFirstSearch(root, Node(' '))<<endl;
 	cout<<"BFS Search Path: "<<breadthFirstSearch(root, Node(r))<<endl<<endl;
 
 

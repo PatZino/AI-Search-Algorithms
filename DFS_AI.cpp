@@ -67,18 +67,13 @@ string depthFirstSearch(Node root, Node goal)
 	std::stack<Node> Q;
 	std::vector<Node> children;
 	string path = "";
-
 	Q.push(root);
-
 	while(!Q.empty())
 	{
 		Node t = Q.top();
 		path += t.getValue();
-		cout << "The path: ";
-		cout << path;
-
+		cout << "The path: " << path;
 		Q.pop();
-
 		if(t == goal){
 			return path;
 		}
@@ -87,7 +82,6 @@ string depthFirstSearch(Node root, Node goal)
 		}
 		children = t.getChildren();
 		std::reverse(children.begin(),children.end());
-
 		for (int i = 0; i < children.size(); ++i){
 			Q.push(children[i]); 
 		}
@@ -109,8 +103,6 @@ int main(int argc, char** args)
 
 	cout<<endl;
 
-
-//	cout<<"DFS Traversal: "<<depthFirstSearch(root, Node(' '))<<endl;
 	cout<<"DFS Search Path: "<<depthFirstSearch(root, Node(r))<<endl;
 
 	return 0;

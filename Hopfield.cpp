@@ -1,12 +1,12 @@
 #include <bits/stdc++.h>
-#include <iostream>
-#include <conio.h> // getch()
+
+
 using namespace std;
 
 int main (int argc, char *argv[])
 {
-    cout<<"Hopfield Artificial Neural Network (ANN):"<<endl<<endl;
-    srand(time(NULL)); // use current time to seed random number generator
+    cout<<"Hopfield Neural Network: "<<endl<<endl;
+    srand(time(0)); // use current time to seed random number generator
     int n=10;          // size of each pattern = number of neurons
     int i,j,k,sum;
 
@@ -28,8 +28,7 @@ int main (int argc, char *argv[])
     }
     cout<<endl;
 
-    // calculate the weight matrix (symmetric and square)
-    // w[i,j]=w[j,i] & i!=j (i==j => w=0)
+    //weight matrix calculated
     int* w=new int[n*n];
     for(j=0;j<n;j++)
         for(i=j;i<n;i++)
@@ -90,10 +89,10 @@ int main (int argc, char *argv[])
     while(ctr_unchg<100 && ctr<1000) // max 1000 loops allowed
     {
 
-        // First choice for updating the network
-        for(k=0;k<n;k++) // update the whole network ?
+        //updating the Hopfield network
+        for(k=0;k<n;k++)
         {
-            // Serial-Random updating:
+        	
             // Randomly select a neuron and update its value
             j=rand()%n;
             sum=0;
@@ -153,6 +152,5 @@ int main (int argc, char *argv[])
     delete []neuron;
     delete []neuron_prev;
 
-    getch(); // wait until any key is pressed
     return 0;
 }

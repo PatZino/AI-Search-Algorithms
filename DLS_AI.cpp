@@ -62,83 +62,52 @@ void construct(Node *r)
 }
 
 
-string depthFirstSearch(Node root, Node goal)
+string depthLimitedSearch(Node root, Node goal)
 {
 	std::stack<Node> Q;
 	std::vector<Node> children;
+	std::stack<int> stackDepth;
 	string path = "";
 	int depth = 0;
-	int limit;
-   	std::cout << "Enter the limit for your DLS: " ;
-	std::cin >> limit;
-
+	int limit = 2;
 	Q.push(root);
-	
+	stackDepth.push(depth);
 		while(!Q.empty()) 
 	{
-		if (depth <= limit){
+		if (depth < limit){		
 			Node t = Q.top();
-		path += t.getValue();
-	//	cout << "The path: ";
-	//	cout << path << endl;
-
-		Q.pop();
+			path += t.getValue();
+			Q.pop();
+			stackDepth.top();
+			stackDepth.pop();
 		
-		
-  
 				if(t == goal){
 					return path;
-					}
-		
+				}
 					else{
-	
 						children = t.getChildren();
 						std::reverse(children.begin(),children.end());
-
-						for (int i = 0; i < children.size(); ++i){
+						for (int i = 0; i < children.size(); i++){
 						Q.push(children[i]);
-								
+					//	stackDepth.push(depth+1);
 						} 
-		depth++; 
-		
-			}
-			
-		}
-		
+					//	depth++; 
+					stackDepth.push(depth+1);	
+		            }			
+		}	
 		else{
 			cout << "Goal node is not found within the depth" << endl;
-		}
-		
+			break;
+		}	
 	}
-
-/**
-	while(!Q.empty()) // && (path.size())<=limit
-	{
-		Node t = Q.top();
-		path += t.getValue();
-		cout << "The path: ";
-		cout << path << endl;
-
-		Q.pop();
-
-		if(t == goal){
-			
-			return path;
-		}
-		children = t.getChildren();
-		std::reverse(children.begin(),children.end());
-
-		for (int i = 0; i < children.size(); ++i){
-			Q.push(children[i]);
-		} 
-	} 
-	**/
 	return path;
 }
 
 
 int main(int argc, char** args)
 {	
+	for(int j=0; j<1; j++){
+
 	char r;
 	cout<<"Enter root node"<<endl;
 	cin>>r;
@@ -151,9 +120,10 @@ int main(int argc, char** args)
 
 	cout<<endl;
 
-
-	cout<<"DFS Traversal: "<<depthFirstSearch(root, Node(' '))<<endl;
-	cout<<"DFS Search Path: "<<depthFirstSearch(root, Node(r))<<endl;
+	cout<<"DLS Path: "<<depthLimitedSearch(root, Node(r))<<endl;
+		}
 
 	return 0;
+	
+	
 }
