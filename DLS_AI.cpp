@@ -78,7 +78,7 @@ string depthLimitedSearch(Node root, Node goal)
 			Node t = Q.top();
 			path += t.getValue();
 			Q.pop();
-			stackDepth.top();
+		depth =	stackDepth.top();
 			stackDepth.pop();
 		
 				if(t == goal){
@@ -89,10 +89,10 @@ string depthLimitedSearch(Node root, Node goal)
 						std::reverse(children.begin(),children.end());
 						for (int i = 0; i < children.size(); i++){
 						Q.push(children[i]);
-					//	stackDepth.push(depth+1);
+						stackDepth.push(depth+1);
 						} 
 					//	depth++; 
-					stackDepth.push(depth+1);	
+				//	stackDepth.push(depth+1);	
 		            }			
 		}	
 		else{
