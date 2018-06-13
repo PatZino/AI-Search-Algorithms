@@ -5,21 +5,22 @@ using namespace std;
 
 int main (int argc, char *argv[])
 {
-    cout<<"Hopfield Neural Network: "<<endl<<endl;
+    cout<<"The Hopfield Network: \n\n";
     srand(time(0)); // use current time to seed random number generator
-    int n=10;          // size of each pattern = number of neurons
-    int i,j,k,sum;
-
-    // Create a random pattern matrix to learn.
-    // Each row is a separate pattern to learn (n bits each).
-    cout<<"Training patterns:"<<endl<<endl;
-    // max capacity (number of patterns it can learn) of Hopfield network
-    // is 0.138N (N: number of neurons)
-    int m=static_cast<int>(0.138f*n); // number of patterns (rows)
-    int* pattern=new int[m*n];
-    for(j=0;j<m;j++)     // rows
+    int n,i,j,k,addition, errorPercentage;
+    
+    cout << "Enter size of the input state vector: ";
+    cin >> n;
+    
+    cout<<"Input State: ";
+	//The maximum number of fundamental memories that can be stored in the n-neuron
+	//recurrent network is limited by 0.15n
+   
+    int m=static_cast<int>(0.15f*n); // number of patterns
+	int* pattern=new int[m*n];
+    for(j=0;j<m;j++)    
     {
-        for(i=0;i<n;i++) // columns
+        for(i=0;i<n;i++) 
         {
             pattern[j*n+i]=rand()%2;
             cout<<pattern[j*n+i];
@@ -28,129 +29,124 @@ int main (int argc, char *argv[])
     }
     cout<<endl;
 
-    //weight matrix calculated
-    int* w=new int[n*n];
+    //Weight Matrix
+    int* weightMatrix=new int[n*n];
     for(j=0;j<n;j++)
         for(i=j;i<n;i++)
             if(i==j)
-                w[j*n+i]=0;
+               weightMatrix[j*n+i]=0;
             else
             {
-                sum=0;
+                addition=0;
                 for(k=0;k<m;k++)
-                    sum+=(pattern[k*n+i]*2-1)*(pattern[k*n+j]*2-1);
-                w[j*n+i]=sum;
-                w[i*n+j]=sum;
+                    addition+=(pattern[k*n+i]*2-1)*(pattern[k*n+j]*2-1);
+     		        weightMatrix[j*n+i]=addition;
+                    weightMatrix[i*n+j]=addition;
             }
 
-    // print the weight matrix
-    cout<<"The weight matrix:"<<endl<<endl;
+    
+    cout<<"\nWeight Matrix: \n\n";
     for(j=0;j<n;j++)
     {
         for(i=0;i<n;i++)
-            printf("%2d ",w[j*n+i]);
-        cout<<endl;
+    	    cout << setw(3) << weightMatrix[j*n+i];
+            cout<<endl;
     }
     cout<<endl;
 
-    cout<<"Pattern-recognition Test:"<<endl<<endl;
-    // Select one of the training patterns randomly
-    int selectedPattern=rand()%m;
-    cout<<"Test pattern selected:"<<endl;
+    cout<<"Testing: \n\n";
+    // Randomly pick one of the training patterns
+    int patternPicked=rand()%m;
+    cout<<"Test picked pattern:\n\n";
     for(i=0;i<n;i++)
     {
-        cout<<pattern[selectedPattern*n+i];
+        cout<<pattern[patternPicked*n+i];
     }
-    cout<<endl<<endl;
+    cout<<"\n\n";
 
-    int errorPercentage=10;
-    cout<<"Initial network state:"<<endl;
-    cout<<"The test pattern w/ "<<errorPercentage<<"% error added:"<<endl;
-    int* neuron=new int[n];      // current state of the network
-    int* neuron_prev=new int[n]; // prev state of the network
+	//Generating probe vector for retrieval
+    //Enter error percentage for probe vector
+    cout << "Enter error percentage for probe vector: ";
+    cin >> errorPercentage;
+    
+    
+    cout<<"\n\nInitial network state: \n\n";
+    cout<<errorPercentage<<"% error added: ";
+    int* neuron=new int[n];     
+    int* neuronPreviousState=new int[n]; 
     for(i=0;i<n;i++)
     {
-        neuron[i]=pattern[selectedPattern*n+i];
+        neuron[i]=pattern[patternPicked*n+i];
         if(rand()%100<errorPercentage) neuron[i]=1-neuron[i];
         cout<<neuron[i];
-        neuron_prev[i]=neuron[i]; // initially prev state=current
+        neuronPreviousState[i]=neuron[i]; 
     }
-    cout<<endl<<endl;
+    cout<<"\n\n";
 
-    // if state of the network stays unchanged for ? steps
-    // that means the network is converged to an answer
-    // so then exit the loop and printout the last state
-    int ctr_unchg=0;
+    //exit the loop if network stays stable, it depicts convergence
+    int stable=0; 
 
-    // loop counter to ensure a stop just in case
-    // if the network becomes cyclic or chaotic
-    int ctr=0;
+    // counter is looped to stop the network when it begins to move in cycles or it becomes disorganized
+    int counter=0;
 
-    while(ctr_unchg<100 && ctr<1000) // max 1000 loops allowed
+    while(stable<100 && counter<500) 
     {
 
-        //updating the Hopfield network
+        //updating the network
         for(k=0;k<n;k++)
         {
         	
             // Randomly select a neuron and update its value
             j=rand()%n;
-            sum=0;
+            addition=0;
             for(i=0;i<n;i++)
                 if(i!=j)
-                    sum+=neuron[i]*w[j*n+i];
-            if(sum>=0)
+                    addition+=neuron[i]*weightMatrix[j*n+i];
+            if(addition>=0)
                 neuron[j]=1;
             else
                 neuron[j]=0;
         }
 
-        bool changed=false;
+        bool altered=false;
         for(k=0;k<n;k++)
-            if(neuron[k]!=neuron_prev[k])
+            if(neuron[k]!=neuronPreviousState[k])
             {
-                changed=true;
+                altered=true;
                 break;
             }
-        if(changed==false)
-            ctr_unchg++;
+        if(altered==false)
+            stable++;
         else
-            ctr_unchg=0;
+            stable=0;
 
-        // update the previous network state
+        //previous network state updated
         for(k=0;k<n;k++)
-            neuron_prev[k]=neuron[k];
+            neuronPreviousState[k]=neuron[k];
 
-        ctr++;
+        counter++;
     }
 
-    // note: Hopfield net also learns inverse of each bit pattern
-    // so it can also end up with one of the inverse patterns!
-
-    // if the network is converged then
-    // printout the last state of the network
-    if(ctr_unchg>=100)
+    if(stable>=100)
     {
-        cout<<"Converged network state:"<<endl<<endl;
+        cout<<"Converged state: ";
         for(i=0;i<n;i++)
             cout<<neuron[i];
-        cout<<endl<<endl;
+        cout<<"\n\n";
 
-        // calculate the convergence error percentage
-        int sumDif=0; // total number of differences
+        int numberOfDifferences=0; 
         for(i=0;i<n;i++)
-            if(neuron[i]!=pattern[selectedPattern*n+i])
-                sumDif++;
-        cout<<"Convergence error percentage:"<<100*sumDif/n<<endl;
+            if(neuron[i]!=pattern[patternPicked*n+i])
+                numberOfDifferences++;
+        cout<<"Convergence error percentage:"<<100*numberOfDifferences/n<<endl;
     }
     else
-        cout<<"The network did not reach the convergence limit set!"<<endl;
+        cout<<"Set convergence limit not reached\n";
 
-    // garbage collection
     delete []pattern;
-    delete []w;
+    delete []weightMatrix;
     delete []neuron;
-    delete []neuron_prev;
+    delete []neuronPreviousState;
 
     return 0;
 }

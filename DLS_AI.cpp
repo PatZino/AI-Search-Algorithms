@@ -72,41 +72,35 @@ string depthLimitedSearch(Node root, Node goal)
 	int limit = 2;
 	Q.push(root);
 	stackDepth.push(depth);
-		while(!Q.empty()) 
+	while(!Q.empty()) 
 	{
-		if (depth < limit){		
-			Node t = Q.top();
-			path += t.getValue();
-			Q.pop();
-		depth =	stackDepth.top();
-			stackDepth.pop();
+   	    Node t = Q.top();
+		path+= t.getValue();
+		Q.pop();
+		depth = stackDepth.top();
+		stackDepth.pop();
+		if(t==goal){
+		return path;
+		}
 		
-				if(t == goal){
-					return path;
-				}
-					else{
-						children = t.getChildren();
-						std::reverse(children.begin(),children.end());
-						for (int i = 0; i < children.size(); i++){
-						Q.push(children[i]);
-						stackDepth.push(depth+1);
-						} 
-					//	depth++; 
-				//	stackDepth.push(depth+1);	
-		            }			
-		}	
+		if(depth<limit){		
+			children = t.getChildren();
+			std::reverse(children.begin(), children.end());
+			for(int i=0;i<children.size();i++){
+				Q.push(children[i]);
+				stackDepth.push(depth+1);
+			}
+		}		
 		else{
-			cout << "Goal node is not found within the depth" << endl;
-			break;
-		}	
+		cout<< "Goal node is not found within the depth"<<endl;
+		break;
+		}
 	}
-	return path;
 }
 
 
 int main(int argc, char** args)
-{	
-	for(int j=0; j<1; j++){
+{
 
 	char r;
 	cout<<"Enter root node"<<endl;
@@ -121,9 +115,8 @@ int main(int argc, char** args)
 	cout<<endl;
 
 	cout<<"DLS Path: "<<depthLimitedSearch(root, Node(r))<<endl;
-		}
 
 	return 0;
 	
-	
 }
+
